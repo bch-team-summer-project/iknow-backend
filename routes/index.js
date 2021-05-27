@@ -2,6 +2,7 @@ var cors = require('cors')
 var express = require("express");
 var router = express.Router();
 const fetch = require("node-fetch");
+const BASE_URL= "https://iknow-backend.herokuapp.com/";
 
 /* GET Events page. */
 router.get("/events", async function (req, res, next) {
@@ -34,7 +35,7 @@ const getBeachTemp = () => {
         beachTemp.id = key;
         beachTemp.beachName = element.meta.name;
         beachTemp.image =
-          "http://localhost:8080/images/" +
+        BASE_URL +
           element.meta.name.replace(/\s/g, "") +
           ".jpg";
         beachTemp.waterTemp = element.data[element.data.length - 1].temp_water;
