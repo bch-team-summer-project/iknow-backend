@@ -2,8 +2,8 @@ var cors = require('cors')
 var express = require("express");
 var router = express.Router();
 const fetch = require("node-fetch");
-//const BASE_URL= "https://iknow-backend.herokuapp.com/";
-const BASE_URL= "http://localhost:8080/";
+const BASE_URL= "https://iknow-backend.herokuapp.com/";
+// const BASE_URL= "http://localhost:8080/";
 
 /* GET Events page. */
 router.get("/events", async function (req, res, next) {
