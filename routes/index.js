@@ -2,6 +2,7 @@ const e = require("cors");
 var express = require("express");
 var router = express.Router();
 const fetch = require("node-fetch");
+const db = require("./queries");
 
 /* GET Events page. */
 router.get("/events", async function (req, res, next) {
