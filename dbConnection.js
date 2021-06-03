@@ -1,8 +1,9 @@
-import { Pool, Client } from "pg";
-import { config } from "dotenv";
-import { App } from "shared-types";
-import { response } from "express";
-config();
+/* import { Pool, Client } from "pg"; */
+
+require("dotenv").config();
+
+const { Pool } = require("pg");
+
 const connectionSettings = {
   user: process.env.USERNAME,
   password: process.env.PASSWORD,
@@ -10,16 +11,19 @@ const connectionSettings = {
   host: process.env.CLOUD_HOST,
   database: process.env.DATABASE,
 };
-export function createPoolConnection() {
+function connect() {
   const pool = new Pool(connectionSettings);
+  pool.on("error", () => {
+    return console.log("Error with Postgres db connection");
+  });
   return pool;
 }
 
-export async function createClienConnection() {
+/* export async function createClientConnection() {
   const client = new Client(connectionSettings);
   await client.connect();
   return client;
-}
+} */
 
 const createTableEvents = `
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -36,16 +40,16 @@ const createTableLost = `
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS lost (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  category varchar(10) not null,
-  name varchar(100) not null,
-  img bytea,
-  location varchar not null,
-  placeOrigin varchar,
+  category VARCHAR(10) not null,
   date TIMESTAMP not null,
-  description varchar(500)
+  name VARCHAR(100) not null,
+  location VARCHAR not null,
+  img BYTEA,
+  placeOrigin VARCHAR,
+  description VARCHAR(500)
 );`;
 
-client.query(createTableEvents, (err, res) => {
+/* client.query(createTableEvents, (err, res) => {
   if (err) {
     console.error(err);
     return;
@@ -61,9 +65,20 @@ client.query(createTableLost, (err, res) => {
   }
   console.log("Table is successfully created");
   client.end();
-});
+}); */
 
-const getLost = (request, response) => {
+module.exports.dbQuery = async function (query, arr) {
+  const pgClient = connect();
+  if (arr) {
+    const response = await pgClient.query(query, arr);
+    return response;
+  } else {
+    const response = await pgClient.query(query ? query : createTableLost);
+    return response;
+  }
+};
+
+/* const getLost = (request, response) => {
   pool.query("SELECT * FROM lost ORDER BY date ASC", (error, results) => {
     if (error) {
       throw error;
@@ -134,3 +149,4 @@ module.exports = {
   updateLost,
   deleteLost,
 };
+ */

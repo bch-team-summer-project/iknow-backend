@@ -1,8 +1,11 @@
-const e = require("cors");
+var cors = require("cors");
 var express = require("express");
 var router = express.Router();
 const fetch = require("node-fetch");
-const db = require("./queries");
+const BASE_URL = "https://iknow-backend.herokuapp.com/";
+// const BASE_URL= "http://localhost:8080/";
+const { dbQuery } = require("../dbConnection");
+dbQuery();
 
 /* GET Events page. */
 router.get("/events", async function (req, res, next) {
@@ -13,7 +16,7 @@ router.get("/events", async function (req, res, next) {
 
 /* GET Activities page. */
 router.get("/activities", async function (req, res, next) {
-  let jsonResponse = await getDataFromOpenAPI("activities");
+  let jsonResponse = await getDataFromOpenAPI("activities", "");
   res.json(jsonResponse);
 });
 
@@ -35,9 +38,7 @@ const getBeachTemp = () => {
         beachTemp.id = key;
         beachTemp.beachName = element.meta.name;
         beachTemp.image =
-          "http://localhost:8080/images/" +
-          element.meta.name.replace(/\s/g, "") +
-          ".jpg";
+          BASE_URL + "/images/" + element.meta.name.replace(/\s/g, "") + ".jpg";
         beachTemp.waterTemp = element.data[element.data.length - 1].temp_water;
         beachTemp.airTemp = element.data[element.data.length - 1].temp_air;
         beachTemp.time = element.data[element.data.length - 1].time;
@@ -55,7 +56,7 @@ const getDataFromOpenAPI = (apiType, category) => {
       break;
     case "activities":
       URL =
-        "http://open-api.myhelsinki.fi/v1/activities/?language_filter=en&limit=5";
+        "http://open-api.myhelsinki.fi/v1/activities/?language_filter=en&limit=20";
       break;
 
     default:
