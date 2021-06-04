@@ -1,28 +1,32 @@
+require("dotenv").config();
 const express = require("express");
-var cors = require('cors')
+const cors = require("cors");
 const app = express();
-var path = require("path");
+const logger = require("morgan");
+const errorHandler = require("./error");
+
 const indexRoutes = require("./routes");
 const weatherRoutes = require("./routes/weather");
 const profileRoutes = require("./routes/profileRoutes");
-app.use(cors())
-app.set("port", 8080);
-app.set("ip", "0.0.0.0");
-
-/* app.get("/", (req, res) => {
-  return res.status(200).json({
-    message: "Hello world from node",
-  });
-}); */
-app.use(express.static(path.join(__dirname, "public")));
+const lostRoutes = require("./routes/lost");
+const { dbQuery } = require("./dbConnection");
+dbQuery();
+app.use(cors());
+app.set("port", process.env.PORT);
+app.set("ip", process.env.IP);
+app.use(logger("dev"));
+app.use(express.json());
 
 app.use("/", indexRoutes);
 app.use("/weather", weatherRoutes);
+app.use("/lost", lostRoutes);
 app.use("/profile", profileRoutes);
 
 app.get("*", (req, res) => {
   return res.send("error 404, page not found");
 });
+
+app.use(errorHandler);
 
 app.listen(process.env.PORT || app.get("port"), app.get("ip"), (err) => {
   if (err) {

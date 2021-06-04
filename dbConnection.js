@@ -1,23 +1,20 @@
-import { Pool, Client } from "pg";
-import { config } from "dotenv";
-import { App } from "shared-types";
-config();
-const connectionSettings = {
-  user: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  port: Number(process.env.CLOUD_PORT),
-  host: process.env.CLOUD_HOST,
-  database: process.env.DATABASE,
-};
-export function createPoolConnection() {
-  const pool = new Pool(connectionSettings);
-  return pool;
-}
+/* import { Pool, Client } from "pg"; */
 
-export async function createClienConnection() {
-  const client = new Client(connectionSettings);
-  await client.connect();
-  return client;
+require("dotenv").config();
+
+const { Pool, Client } = require("pg");
+
+function connect() {
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+  pool.on("error", () => {
+    return console.log("Error with Postgres db connection");
+  });
+  return pool;
 }
 
 const createTableEvents = `
@@ -34,30 +31,23 @@ CREATE TABLE IF NOT EXISTS events1 (
 const createTableLost = `
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS lost (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  category varchar(10) not null,
-  name varchar(100) not null,
-  img bytea,
-  location varchar not null,
-  placeOrigin varchar,
-  date TIMESTAMP not null,
-  description varchar(500)
+  id SERIAL NOT NULL PRIMARY KEY,
+  category VARCHAR(10) NOT NULL,
+  date VARCHAR(50) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  location VARCHAR(200) NOT NULL,
+  img VARCHAR(255),
+  placeOrigin VARCHAR(200),
+  description VARCHAR(500)
 );`;
 
-client.query(createTableEvents, (err, res) => {
-  if (err) {
-    console.error(err);
-    return;
+module.exports.dbQuery = async function (query, arr) {
+  const pgClient = connect();
+  if (arr) {
+    const response = await pgClient.query(query, arr);
+    return response;
+  } else {
+    const response = await pgClient.query(query ? query : createTableLost);
+    return response;
   }
-  console.log("Table is successfully created");
-  client.end();
-});
-
-client.query(createTableLost, (err, res) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  console.log("Table is successfully created");
-  client.end();
-});
+};
