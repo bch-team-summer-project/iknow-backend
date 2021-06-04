@@ -1,4 +1,4 @@
-var createError = require('http-errors');
+/* var createError = require('http-errors');
 var express = require('../..');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -28,3 +28,4 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
+ */

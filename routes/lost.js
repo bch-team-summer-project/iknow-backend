@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { dbQuery } = require("../dbConnection");
+const moment = require("moment");
 
 /*Lost routes*/
 router
@@ -21,14 +22,17 @@ router
     try {
       const { category, date, name, location, img, placeOrigin, description } =
         req.body;
+
+      console.log("Req body is", req.body);
+
+      const formattedDate = new Date(Date.parse(date)).toString();
+      const newmoment = moment(formattedDate).format("DD.MM.YYYY, HH:mm");
+
       const newlost = await dbQuery(
-        "INSERT INTO lost VALUES($1, $2, $3, $4, $5, $6, $7)",
-        [category, date, name, location, img, placeOrigin, description]
+        "INSERT INTO lost(category, date, name, location, img, placeOrigin, description) VALUES($1, $2, $3, $4, $5, $6, $7)",
+        [category, newmoment, name, location, img, placeOrigin, description]
       );
-      /* (error, result) => {
-          if (error) {
-            throw error;
-          } */
+
       return res
         .status(201)
         .json({ message: `Lost item added with ID: ${newlost.insertId}` });
@@ -61,10 +65,11 @@ router
       const id = parseInt(req.params.id);
       const { category, date, name, location, img, placeOrigin, description } =
         req.body;
-
+      const formattedDate = new Date(Date.parse(date)).toString();
+      const newmoment = moment(formattedDate).format("DD.MM.YYYY, HH:mm");
       const editlost = await dbQuery(
         "UPDATE lost SET categgory = $1, date = $2, name=$3, location=$4, img=$5, placeOrigin=$6, description=$7 WHERE id = $8",
-        [category, date, name, location, img, placeOrigin, description]
+        [category, newmoment, name, location, img, placeOrigin, description]
       );
 
       return res
@@ -92,3 +97,4 @@ router
       });
     }
   });
+module.exports = router;
