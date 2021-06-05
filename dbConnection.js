@@ -19,13 +19,14 @@ function connect() {
 
 const createTableEvents = `
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-CREATE TABLE IF NOT EXISTS events1 (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type varchar(10) not null,
-  date TIMESTAMP not null,
-  address varchar(300) not null,
-  photo bytea not null,
-  description varchar(500)
+CREATE TABLE IF NOT EXISTS event (
+  id SERIAL NOT NULL PRIMARY KEY,
+  name VARCHAR(300) NOT NULL,
+  type VARCHAR(20) NOT NULL,
+  date VARCHAR(50) NOT NULL,
+  location VARCHAR(300) NOT NULL,
+  image VARCHAR NOT NULL,
+  description VARCHAR(500)
 );`;
 
 const createTableLost = `
