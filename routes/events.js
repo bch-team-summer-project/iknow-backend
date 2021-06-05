@@ -3,14 +3,14 @@ const router = express.Router();
 const { dbQuery } = require("../dbConnection");
 const moment = require("moment");
 
-/*Lost routes*/
+/*event routes*/
 router
   .route("/")
   .get(async (req, res, next) => {
     try {
-      const lost = await dbQuery("SELECT * FROM lost ORDER BY date ASC");
+      const event = await dbQuery("SELECT * FROM event ORDER BY date ASC");
 
-      return res.status(200).json(lost.rows);
+      return res.status(200).json(event.rows);
     } catch (error) {
       return next({
         status: 404,
@@ -20,22 +20,21 @@ router
   })
   .post(async (req, res, next) => {
     try {
-      const { category, date, name, location, img, placeOrigin, description } =
-        req.body;
+      const { name, type, date, location, image, description } = req.body;
 
       console.log("Req body is", req.body);
 
       const formattedDate = new Date(Date.parse(date)).toString();
       const newmoment = moment(formattedDate).format("DD.MM.YYYY, HH:mm");
 
-      const newlost = await dbQuery(
-        "INSERT INTO lost(category, date, name, location, img, placeOrigin, description) VALUES($1, $2, $3, $4, $5, $6, $7)",
-        [category, newmoment, name, location, img, placeOrigin, description]
+      const newevent = await dbQuery(
+        "INSERT INTO event(name, type, date, location, image, description) VALUES($1, $2, $3, $4, $5, $6)",
+        [name, type, date, location, image, description]
       );
 
       return res
         .status(201)
-        .json({ message: `Lost item added with ID: ${newlost.id}` });
+        .json({ message: `event added with ID: ${newevent.id}` });
     } catch (error) {
       return next({
         status: 404,
@@ -50,9 +49,9 @@ router
     try {
       const id = parseInt(req.params.id);
 
-      const onelost = await dbQuery("SELECT * FROM lost WHERE id = $1", [id]);
+      const oneevent = await dbQuery("SELECT * FROM event WHERE id = $1", [id]);
 
-      return res.status(201).json(onelost.rows);
+      return res.status(201).json(oneevent.rows);
     } catch (error) {
       return next({
         status: 404,
@@ -63,18 +62,17 @@ router
   .put(async (req, res, next) => {
     try {
       const id = parseInt(req.params.id);
-      const { category, date, name, location, img, placeOrigin, description } =
-        req.body;
+      const { name, type, date, location, image, description } = req.body;
       const formattedDate = new Date(Date.parse(date)).toString();
       const newmoment = moment(formattedDate).format("DD.MM.YYYY, HH:mm");
-      const editlost = await dbQuery(
-        "UPDATE lost SET categgory = $1, date = $2, name=$3, location=$4, img=$5, placeOrigin=$6, description=$7 WHERE id = $8",
-        [category, newmoment, name, location, img, placeOrigin, description]
+      const editevent = await dbQuery(
+        "UPDATE event SET name = $1, type = $2, date=$3, location=$4, image=$5, description=$6 WHERE id = $7",
+        [name, type, date, location, image, description]
       );
 
       return res
         .status(201)
-        .json({ message: `Item modified with ID: ${editlost.id}` });
+        .json({ message: `Event modified with ID: ${editevent.id}` });
     } catch (error) {
       return next({
         status: 404,
@@ -86,10 +84,10 @@ router
     try {
       const id = parseInt(req.params.id);
 
-      const deletelost = dbQuery("DELETE FROM lost WHERE id = $1", [id]);
+      const deleteevent = dbQuery("DELETE FROM event WHERE id = $1", [id]);
       return res
         .status(201)
-        .json({ message: `Lost item deleted with ID: ${deletelost.id}` });
+        .json({ message: `event item deleted with ID: ${deleteevent.id}` });
     } catch (error) {
       return next({
         status: 404,

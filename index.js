@@ -7,8 +7,8 @@ const errorHandler = require("./error");
 
 const indexRoutes = require("./routes");
 const weatherRoutes = require("./routes/weather");
-const profileRoutes = require("./routes/profileRoutes");
 const lostRoutes = require("./routes/lost");
+const eventRoutes = require("./routes/events");
 const { dbQuery } = require("./dbConnection");
 dbQuery();
 app.use(cors());
@@ -20,7 +20,7 @@ app.use(express.json());
 app.use("/", indexRoutes);
 app.use("/weather", weatherRoutes);
 app.use("/lost", lostRoutes);
-app.use("/profile", profileRoutes);
+app.use("/newevent", eventRoutes);
 
 app.get("*", (req, res) => {
   return res.send("error 404, page not found");
