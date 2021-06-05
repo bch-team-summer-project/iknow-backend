@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { dbQuery } = require("../dbConnection");
+/*date manipulation*/
 const moment = require("moment");
 
 /*Lost routes*/
@@ -20,14 +21,15 @@ router
   })
   .post(async (req, res, next) => {
     try {
+      /*state from react*/
       const { category, date, name, location, img, placeOrigin, description } =
         req.body;
 
       console.log("Req body is", req.body);
-
+      /*date manipulations*/
       const formattedDate = new Date(Date.parse(date)).toString();
       const newmoment = moment(formattedDate).format("DD.MM.YYYY, HH:mm");
-
+      /*inserting into db*/
       const newlost = await dbQuery(
         "INSERT INTO lost(category, date, name, location, img, placeOrigin, description) VALUES($1, $2, $3, $4, $5, $6, $7)",
         [category, newmoment, name, location, img, placeOrigin, description]
@@ -35,7 +37,7 @@ router
 
       return res
         .status(201)
-        .json({ message: `Lost item added with ID: ${newlost.id}` });
+        .json({ message: `Lost item added with ID: ${id}` });
     } catch (error) {
       return next({
         status: 404,
@@ -49,7 +51,7 @@ router
   .get(async (req, res, next) => {
     try {
       const id = parseInt(req.params.id);
-
+      /*taking exact id from db*/
       const onelost = await dbQuery("SELECT * FROM lost WHERE id = $1", [id]);
 
       return res.status(201).json(onelost.rows);
@@ -72,9 +74,7 @@ router
         [category, newmoment, name, location, img, placeOrigin, description]
       );
 
-      return res
-        .status(201)
-        .json({ message: `Item modified with ID: ${editlost.id}` });
+      return res.status(201).json({ message: `Item modified with ID: ${id}` });
     } catch (error) {
       return next({
         status: 404,
@@ -85,11 +85,11 @@ router
   .delete(async (req, res, next) => {
     try {
       const id = parseInt(req.params.id);
-
+      /*deleting from lost by od number*/
       const deletelost = dbQuery("DELETE FROM lost WHERE id = $1", [id]);
       return res
         .status(201)
-        .json({ message: `Lost item deleted with ID: ${deletelost.id}` });
+        .json({ message: `Lost item deleted with ID: ${id}` });
     } catch (error) {
       return next({
         status: 404,

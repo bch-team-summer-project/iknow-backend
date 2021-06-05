@@ -1,9 +1,8 @@
-/* import { Pool, Client } from "pg"; */
-
+/*env file dependecies included*/
 require("dotenv").config();
-
+/*postgressql connection*/
 const { Pool, Client } = require("pg");
-
+/*inserting user credentials from env file*/
 function connect() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -16,7 +15,7 @@ function connect() {
   });
   return pool;
 }
-
+/*create table event query*/
 const createTableEvents = `
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS event (
@@ -28,7 +27,7 @@ CREATE TABLE IF NOT EXISTS event (
   image VARCHAR NOT NULL,
   description VARCHAR(500)
 );`;
-
+/*create table lost query*/
 const createTableLost = `
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS lost (
@@ -41,7 +40,7 @@ CREATE TABLE IF NOT EXISTS lost (
   placeOrigin VARCHAR(200),
   description VARCHAR(500)
 );`;
-
+/*function for making queries to db that needs query and array of table rows*/
 module.exports.dbQuery = async function (query, arr) {
   const pgClient = connect();
   if (arr) {
