@@ -25,6 +25,7 @@ app.set("port", process.env.PORT);
 app.set("ip", process.env.IP);
 app.use(logger("dev"));
 app.use(express.json());
+app.use(express.static('public'))
 
 app.use("/", indexRoutes);
 app.use("/weather", weatherRoutes);
