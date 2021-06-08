@@ -2,8 +2,26 @@
 const express = require("express");
 const router = express.Router();
 const fetch = require("node-fetch");
-const BASE_URL = "https://iknow-backend.herokuapp.com/";
-// const BASE_URL= "http://localhost:8080/";
+const BASE_URL = "https://iknow-backend.herokuapp.com";
+// const BASE_URL= "http://localhost:8080";
+const beachLocation = {
+  "Munkkiniemi": "https://goo.gl/maps/1aBdj6qMPmbnkk3W8",
+  "Uunisaari": "https://goo.gl/maps/VttguMrrLvMmBMhk9",
+  "Pikkukosken uimaranta": "https://goo.gl/maps/z4zTAnHpLUrQta5Z8",
+  "Kuusijärvi (Vantaa)": "https://goo.gl/maps/JaMXdVcA3Ko6MrBY9",
+  "Vetokannas (Vantaa)": "https://goo.gl/maps/Zv21nYtKpxmQpKL27",
+  "Rastilan uimaranta": "https://goo.gl/maps/vqe3gU7u6UqNjDdX8",
+  "Pihlajasaari": "https://goo.gl/maps/vqe3gU7u6UqNjDdX8",
+  "Vasikkasaari": "https://goo.gl/maps/t3YEMuWgjWu9hbNY6",
+  "Marjaniemen uimaranta": "https://goo.gl/maps/xBx5ZPPbvJXqz4gF7",
+  "Hietaniemi (Ourit)": "https://goo.gl/maps/u58NLYwKT4LVx9WBA",
+  "Lauttasaari (Ryssänkärki)": "https://goo.gl/maps/9FntX2B5b4fyW3e36",
+  "Herttoniemi (Tuorinniemen uimalaituri)": "https://goo.gl/maps/ooCZCxjCrRU7qcmu7",
+  "Vartiosaari (Reposalmen laituri)": "https://goo.gl/maps/7uynUahSBHdXy1L27",
+  "Hanikan uimaranta (Espoo)": "https://goo.gl/maps/TAbtGaqedSuuC2zs9",
+  "Kattilajärvi (Espoo)": "https://goo.gl/maps/Hw2UJTX6VqDGxY7e7",
+  "Suomenlinna": "https://g.page/suomenlinnaofficial?share"
+};
 
 /* GET Events page. */
 router.get("/events", async function (req, res, next) {
@@ -35,6 +53,7 @@ const getBeachTemp = () => {
         let beachTemp = {};
         beachTemp.id = key;
         beachTemp.beachName = element.meta.name;
+        beachTemp.beachLocation = beachLocation[element.meta.name];
         beachTemp.image =
           BASE_URL + "/images/" + element.meta.name.replace(/\s/g, "") + ".jpg";
         beachTemp.waterTemp = element.data[element.data.length - 1].temp_water;
