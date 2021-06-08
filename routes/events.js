@@ -22,7 +22,7 @@ router
   .post(async (req, res, next) => {
     try {
       /*state from react*/
-      const { name, type, date, location, image, description } = req.body;
+      const { name, date, location, image, description } = req.body;
 
       console.log("Req body events is", req.body);
       /*date manipulations*/
@@ -30,8 +30,8 @@ router
       const newmoment = moment(formattedDate).format("DD.MM.YYYY, HH:mm");
       /*inserting into db*/
       const newevent = await dbQuery(
-        "INSERT INTO event(name, type, date, location, image, description) VALUES($1, $2, $3, $4, $5, $6)",
-        [name, type, newmoment, location, image, description]
+        "INSERT INTO event(name, date, location, image, description) VALUES($1, $2, $3, $4, $5)",
+        [name, newmoment, location, image, description]
       );
 
       return res.status(201).json({ message: `event added with ID: ${id}` });
@@ -62,12 +62,12 @@ router
   .put(async (req, res, next) => {
     try {
       const id = parseInt(req.params.id);
-      const { name, type, date, location, image, description } = req.body;
+      const { name, date, location, image, description } = req.body;
       const formattedDate = new Date(Date.parse(date)).toString();
       const newmoment = moment(formattedDate).format("DD.MM.YYYY, HH:mm");
       const editevent = await dbQuery(
-        "UPDATE event SET name = $1, type = $2, date=$3, location=$4, image=$5, description=$6 WHERE id = $7",
-        [name, type, newmoment, location, image, description]
+        "UPDATE event SET name = $1, date=$2, location=$3, image=$4, description=$5 WHERE id = $6",
+        [name, newmoment, location, image, description]
       );
 
       return res.status(201).json({ message: `Event modified with ID: ${id}` });
