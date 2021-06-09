@@ -21,6 +21,7 @@ router
   })
   .post(async (req, res, next) => {
     try {
+      const id = parseInt(req.params.id);
       /*state from react*/
       const { category, date, name, location, img, placeOrigin, description } =
         req.body;
@@ -37,7 +38,7 @@ router
 
       return res
         .status(201)
-        .json({ message: `Lost item added with ID: ${id}` });
+        .json({ message: `Lost item added with name: ${req.body.name}` });
     } catch (error) {
       return next({
         status: 404,

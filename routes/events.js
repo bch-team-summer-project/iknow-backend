@@ -21,6 +21,8 @@ router
   })
   .post(async (req, res, next) => {
     try {
+      const id = parseInt(req.params.id);
+      console.log(req);
       /*state from react*/
       const { name, date, location, image, description } = req.body;
 
@@ -34,7 +36,9 @@ router
         [name, newmoment, location, image, description]
       );
 
-      return res.status(201).json({ message: `event added with ID: ${id}` });
+      return res
+        .status(201)
+        .json({ message: `event added with name: ${req.body.name}` });
     } catch (error) {
       return next({
         status: 404,
